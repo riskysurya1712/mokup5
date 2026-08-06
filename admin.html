@@ -21,11 +21,45 @@
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', -apple-system, sans-serif; }
     body { background-color: var(--bg-dark); color: var(--text-light); padding: 20px; line-height: 1.5; }
 
+    /* Modal Login Overlay */
+    .login-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.95);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 9999;
+      padding: 16px;
+    }
+    .login-box {
+      background: var(--card-dark);
+      border: 1px solid var(--border-dark);
+      padding: 32px;
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .login-box h3 {
+      color: var(--orange-main);
+      margin-bottom: 8px;
+      text-align: center;
+      font-size: 22px;
+    }
+    .login-box p {
+      color: var(--text-muted);
+      font-size: 13px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* Layout Admin */
     .admin-container { max-width: 900px; margin: 0 auto; background: var(--card-dark); border-radius: var(--radius); padding: 24px; border: 1px solid var(--border-dark); }
     .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-dark); padding-bottom: 16px; margin-bottom: 20px; }
     .admin-header h2 { color: var(--orange-main); font-size: 20px; display: flex; align-items: center; gap: 8px; }
-    .btn-back { color: var(--text-muted); text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: var(--bg-dark); border: 1px solid var(--border-dark); border-radius: 6px; }
-    .btn-back:hover { color: var(--text-light); border-color: var(--orange-main); }
+    .header-actions { display: flex; gap: 8px; }
+    .btn-back, .btn-logout { color: var(--text-muted); text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: var(--bg-dark); border: 1px solid var(--border-dark); border-radius: 6px; cursor: pointer; }
+    .btn-back:hover, .btn-logout:hover { color: var(--text-light); border-color: var(--orange-main); }
+    .btn-logout:hover { color: #ef4444; border-color: #ef4444; }
 
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
     .stat-card { background: var(--bg-dark); border: 1px solid var(--border-dark); padding: 16px; border-radius: var(--radius); }
@@ -53,10 +87,31 @@
 </head>
 <body>
 
+  <!-- Modal Form Login Admin -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-box">
+      <h3><i class="fa-solid fa-lock"></i> Login Admin</h3>
+      <p>Masukkan kredensial untuk mengakses Control Panel Toko Kyy</p>
+      
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="loginUser" placeholder="Masukkan username">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPass" placeholder="Masukkan password">
+      </div>
+      <button class="btn-orange-submit" onclick="handleLogin()">Masuk Admin</button>
+    </div>
+  </div>
+
   <div class="admin-container">
     <div class="admin-header">
       <h2><i class="fa-solid fa-user-gear"></i> Control Panel Admin</h2>
-      <a href="index.html" class="btn-back"><i class="fa-solid fa-store"></i> Ke Toko</a>
+      <div class="header-actions">
+        <a href="index.html" class="btn-back"><i class="fa-solid fa-store"></i> Ke Toko</a>
+        <button class="btn-logout" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button>
+      </div>
     </div>
 
     <!-- Informasi Statistik -->
@@ -138,6 +193,10 @@
 
   <!-- Script JS Admin -->
   <script>
+    // Kredensial default
+    const ADMIN_USER = "admin";
+    const ADMIN_PASS = "admin123";
+
     let products = JSON.parse(localStorage.getItem("kyy_products")) || [
       { id: 1, name: "Kemeja Casual Oversize Kyy", price: 95000, img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400", desc: "Katun adem nyaman dipakai seharian.", colors: ["Hitam", "Putih"], sizes: ["M", "L"], kategori:"Fashion" },
       { id: 2, name: "Sepatu Sneaker Sport Pro", price: 165000, img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400", desc: "Sol empuk anti licin.", colors: ["Merah", "Hitam"], sizes: ["40", "41"], kategori:"Fashion" }
@@ -146,8 +205,45 @@
     let salesReport = JSON.parse(localStorage.getItem("kyy_sales")) || [];
 
     document.addEventListener("DOMContentLoaded", () => {
-      renderAdminData();
+      checkLoginStatus();
     });
+
+    // Cek Sesi Login dari LocalStorage
+    function checkLoginStatus() {
+      const isLogged = localStorage.getItem("kyy_admin_logged");
+      const loginOverlay = document.getElementById("loginOverlay");
+
+      if (isLogged === "true") {
+        loginOverlay.style.display = "none";
+        renderAdminData();
+      } else {
+        loginOverlay.style.display = "flex";
+      }
+    }
+
+    // Fungsi Proses Login
+    function handleLogin() {
+      const user = document.getElementById("loginUser").value.trim();
+      const pass = document.getElementById("loginPass").value.trim();
+
+      if (user === ADMIN_USER && pass === ADMIN_PASS) {
+        localStorage.setItem("kyy_admin_logged", "true");
+        document.getElementById("loginOverlay").style.display = "none";
+        document.getElementById("loginUser").value = "";
+        document.getElementById("loginPass").value = "";
+        renderAdminData();
+      } else {
+        alert("Username atau Password salah!");
+      }
+    }
+
+    // Fungsi Logout
+    function handleLogout() {
+      if (confirm("Apakah Anda yakin ingin keluar dari panel admin?")) {
+        localStorage.removeItem("kyy_admin_logged");
+        checkLoginStatus();
+      }
+    }
 
     function switchAdminTab(tab, el) {
       document.querySelectorAll(".admin-tab-btn").forEach(b => b.classList.remove("active"));
