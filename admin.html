@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin System - Toko Kyy</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --orange-main: #f97316;
+      --orange-hover: #ea580c;
+      --bg-dark: #0f172a;
+      --card-dark: #1e293b;
+      --border-dark: #334155;
+      --text-light: #f8fafc;
+      --text-muted: #94a3b8;
+      --radius: 8px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', -apple-system, sans-serif; }
+    body { background-color: var(--bg-dark); color: var(--text-light); padding: 20px; line-height: 1.5; }
+
+    .admin-container { max-width: 900px; margin: 0 auto; background: var(--card-dark); border-radius: var(--radius); padding: 24px; border: 1px solid var(--border-dark); }
+    .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-dark); padding-bottom: 16px; margin-bottom: 20px; }
+    .admin-header h2 { color: var(--orange-main); font-size: 20px; display: flex; align-items: center; gap: 8px; }
+    .btn-back { color: var(--text-muted); text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: var(--bg-dark); border: 1px solid var(--border-dark); border-radius: 6px; }
+    .btn-back:hover { color: var(--text-light); border-color: var(--orange-main); }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: var(--bg-dark); border: 1px solid var(--border-dark); padding: 16px; border-radius: var(--radius); }
+    .stat-card h4 { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
+    .stat-card p { font-size: 22px; font-weight: 700; color: var(--orange-main); }
+
+    .admin-tabs-bar { display: flex; gap: 8px; margin-bottom: 20px; }
+    .admin-tab-btn { background: var(--bg-dark); color: var(--text-muted); border: 1px solid var(--border-dark); padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; }
+    .admin-tab-btn.active { background: var(--orange-main); color: white; border-color: var(--orange-main); }
+
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+    .form-group input, .form-group select { width: 100%; padding: 10px; background: var(--bg-dark); border: 1px solid var(--border-dark); border-radius: 6px; color: white; font-size: 13px; outline: none; }
+    .form-group input:focus { border-color: var(--orange-main); }
+
+    .btn-orange-submit { width: 100%; background: var(--orange-main); color: white; border: none; padding: 12px; border-radius: 6px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+    .btn-orange-submit:hover { background: var(--orange-hover); }
+
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+    .admin-table th, .admin-table td { padding: 12px; border-bottom: 1px solid var(--border-dark); text-align: left; }
+    .admin-table th { background: var(--bg-dark); color: var(--text-muted); font-size: 11px; text-transform: uppercase; }
+    .btn-del { color: #ef4444; background: none; border: none; cursor: pointer; font-weight: 600; }
+    .btn-del:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <div class="admin-container">
+    <div class="admin-header">
+      <h2><i class="fa-solid fa-user-gear"></i> Control Panel Admin</h2>
+      <a href="index.html" class="btn-back"><i class="fa-solid fa-store"></i> Ke Toko</a>
+    </div>
+
+    <!-- Informasi Statistik -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h4>Total Produk</h4>
+        <p id="admTotProd">0</p>
+      </div>
+      <div class="stat-card">
+        <h4>Total Penjualan</h4>
+        <p id="admTotSales">0</p>
+      </div>
+    </div>
+
+    <!-- Navigasi Tab Admin -->
+    <div class="admin-tabs-bar">
+      <button class="admin-tab-btn active" onclick="switchAdminTab('add', this)">Tambah Produk Baru</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('list', this)">Kelola Katalog Produk</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('sales', this)">Laporan Penjualan</button>
+    </div>
+
+    <!-- Tab 1: Form Tambah Produk -->
+    <div id="admTabAdd">
+      <div class="form-group">
+        <label>Nama Produk</label>
+        <input type="text" id="newProdName" placeholder="Contoh: Jaket Denim Vintage">
+      </div>
+      <div class="form-group">
+        <label>Harga (Rp)</label>
+        <input type="number" id="newProdPrice" placeholder="150000">
+      </div>
+      <div class="form-group">
+        <label>Kategori</label>
+        <select id="newProdKat">
+          <option value="Fashion">Fashion</option>
+          <option value="Elektronik">Elektronik</option>
+          <option value="Rumah">Rumah</option>
+          <option value="Aksesoris">Aksesoris</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>URL Gambar Produk</label>
+        <input type="text" id="newProdImg" placeholder="https://images.unsplash.com/...">
+      </div>
+      <button class="btn-orange-submit" onclick="addNewProduct()">Simpan Produk Baru</button>
+    </div>
+
+    <!-- Tab 2: Tabel Daftar Produk -->
+    <div id="admTabList" style="display:none;">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nama Produk</th>
+            <th>Harga</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="admProductTable"></tbody>
+      </table>
+    </div>
+
+    <!-- Tab 3: Tabel Pesanan / Penjualan -->
+    <div id="admTabSales" style="display:none;">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>No Resi</th>
+            <th>Nama Pembeli</th>
+            <th>Total Bayar</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="admSalesTable"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Script JS Admin -->
+  <script>
+    let products = JSON.parse(localStorage.getItem("kyy_products")) || [
+      { id: 1, name: "Kemeja Casual Oversize Kyy", price: 95000, img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400", desc: "Katun adem nyaman dipakai seharian.", colors: ["Hitam", "Putih"], sizes: ["M", "L"], kategori:"Fashion" },
+      { id: 2, name: "Sepatu Sneaker Sport Pro", price: 165000, img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400", desc: "Sol empuk anti licin.", colors: ["Merah", "Hitam"], sizes: ["40", "41"], kategori:"Fashion" }
+    ];
+
+    let salesReport = JSON.parse(localStorage.getItem("kyy_sales")) || [];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderAdminData();
+    });
+
+    function switchAdminTab(tab, el) {
+      document.querySelectorAll(".admin-tab-btn").forEach(b => b.classList.remove("active"));
+      el.classList.add("active");
+
+      document.getElementById("admTabAdd").style.display = tab === 'add' ? 'block' : 'none';
+      document.getElementById("admTabList").style.display = tab === 'list' ? 'block' : 'none';
+      document.getElementById("admTabSales").style.display = tab === 'sales' ? 'block' : 'none';
+    }
+
+    function renderAdminData() {
+      document.getElementById("admTotProd").innerText = products.length;
+      document.getElementById("admTotSales").innerText = salesReport.length;
+
+      // Render Produk
+      document.getElementById("admProductTable").innerHTML = products.length === 0 
+        ? `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Belum ada produk</td></tr>`
+        : products.map((p, i) => `
+          <tr>
+            <td>#${p.id}</td>
+            <td>${p.name}</td>
+            <td>Rp ${p.price.toLocaleString('id-ID')}</td>
+            <td><button class="btn-del" onclick="delProduct(${i})">Hapus</button></td>
+          </tr>
+        `).join('');
+
+      // Render Penjualan
+      document.getElementById("admSalesTable").innerHTML = salesReport.length === 0
+        ? `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Belum ada riwayat transaksi</td></tr>`
+        : salesReport.map(s => `
+          <tr>
+            <td><b>${s.resi}</b></td>
+            <td>${s.pemesan}</td>
+            <td>Rp ${s.total.toLocaleString('id-ID')}</td>
+            <td><span style="color:#22c55e;">${s.status}</span></td>
+          </tr>
+        `).join('');
+    }
+
+    function addNewProduct() {
+      let name = document.getElementById("newProdName").value.trim();
+      let price = parseInt(document.getElementById("newProdPrice").value);
+      let kategori = document.getElementById("newProdKat").value;
+      let img = document.getElementById("newProdImg").value.trim() || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400";
+
+      if (!name || !price) return alert("Nama dan harga produk wajib diisi!");
+
+      products.push({
+        id: Date.now(),
+        name,
+        price,
+        kategori,
+        img,
+        colors: ["Standard"],
+        sizes: ["Free Size"]
+      });
+
+      localStorage.setItem("kyy_products", JSON.stringify(products));
+      renderAdminData();
+
+      // Reset Form Input
+      document.getElementById("newProdName").value = "";
+      document.getElementById("newProdPrice").value = "";
+      document.getElementById("newProdImg").value = "";
+
+      alert("Produk berhasil ditambahkan ke Toko Kyy!");
+    }
+
+    function delProduct(index) {
+      if (confirm("Apakah Anda yakin ingin menghapus produk ini?")) {
+        products.splice(index, 1);
+        localStorage.setItem("kyy_products", JSON.stringify(products));
+        renderAdminData();
+      }
+    }
+  </script>
+</body>
+</html>
