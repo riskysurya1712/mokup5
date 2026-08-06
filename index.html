@@ -256,10 +256,22 @@
 
   <!-- Script JS Pembeli -->
   <script>
-    let products = JSON.parse(localStorage.getItem("kyy_products")) || [
-      { id: 1, name: "Kemeja Casual Oversize Kyy", price: 95000, img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400", desc: "Katun adem nyaman dipakai seharian.", colors: ["Hitam", "Putih"], sizes: ["M", "L"], kategori:"Fashion" },
-      { id: 2, name: "Sepatu Sneaker Sport Pro", price: 165000, img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400", desc: "Sol empuk anti licin.", colors: ["Merah", "Hitam"], sizes: ["40", "41"], kategori:"Fashion" }
+    const defaultProducts = [
+      { id: 1, name: "Kemeja Casual Oversize Kyy", price: 95000, img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400", desc: "Katun adem nyaman dipakai seharian.", colors: ["Hitam", "Putih"], sizes: ["M", "L"], kategori: "Fashion" },
+      { id: 2, name: "Sepatu Sneaker Sport Pro", price: 165000, img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400", desc: "Sol empuk anti licin.", colors: ["Merah", "Hitam"], sizes: ["40", "41"], kategori: "Fashion" },
+      { id: 3, name: "Headphone Wireless Bluetooth Bass", price: 210000, img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400", desc: "Suara jernih dengan extra bass mutakhir.", colors: ["Hitam", "Silver"], sizes: ["Standard"], kategori: "Elektronik" },
+      { id: 4, name: "Smartwatch Sport Waterproof", price: 285000, img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400", desc: "Pelacak detak jantung dan aktivitas olahraga harian.", colors: ["Hitam", "Abu-abu"], sizes: ["Standard"], kategori: "Elektronik" },
+      { id: 5, name: "Jam Tangan Analog Klasik Leather", price: 175000, img: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=400", desc: "Strap kulit sintetis elegan dengan desain timeless.", colors: ["Cokelat", "Hitam"], sizes: ["Standard"], kategori: "Aksesoris" },
+      { id: 6, name: "Kacamata Hitam Polarized UV400", price: 78000, img: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=400", desc: "Perlindungan maksimal dari radiasi sinar matahari.", colors: ["Hitam", "Cokelat"], sizes: ["Standard"], kategori: "Aksesoris" },
+      { id: 7, name: "Lampu Meja LED Minimalis Desk Lamp", price: 89000, img: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400", desc: "Cahaya fleksibel hemat energi untuk meja belajar.", colors: ["Putih", "Hitam"], sizes: ["Standard"], kategori: "Rumah" },
+      { id: 8, name: "Cangkir Keramik Estetik Nordic", price: 45000, img: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400", desc: "Gelas minum kopi dan teh bergaya scandinavian.", colors: ["Putih", "Krem"], sizes: ["350ml"], kategori: "Rumah" },
+      { id: 9, name: "Tas Ransel Laptop Waterproof 15 Inci", price: 145000, img: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400", desc: "Slot khusus laptop dengan bahan tahan cipratan air.", colors: ["Hitam", "Navy"], sizes: ["Large"], kategori: "Fashion" },
+      { id: 10, name: "Speaker Bluetooth Portable Mini", price: 115000, img: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400", desc: "Ukuran ringkas mudah dibawa bepergian.", colors: ["Hitam", "Biru"], sizes: ["Mini"], kategori: "Elektronik" },
+      { id: 11, name: "Mouse Wireless Ergonomis Silent Click", price: 65000, img: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=400", desc: "Koneksi presisi tanpa suara klik yang mengganggu.", colors: ["Hitam", "Abu-abu"], sizes: ["Standard"], kategori: "Elektronik" },
+      { id: 12, name: "Botol Minum Tumbler Stainless Steel 500ml", price: 62000, img: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400", desc: "Menjaga suhu panas dan dingin hingga 12 jam.", colors: ["Hitam", "Silver"], sizes: ["500ml"], kategori: "Rumah" }
     ];
+
+    let products = JSON.parse(localStorage.getItem("kyy_products")) || defaultProducts;
 
     const kategori = ["Semua", "Fashion", "Elektronik", "Rumah", "Aksesoris"];
     const validVouchers = {'KYY20': 0.20};
@@ -291,7 +303,7 @@
 
       document.getElementById("products").innerHTML = list.map(p => `
         <div class="product-card" onclick="openProductModal(${p.id})">
-          <img class="product-img" src="${p.img}">
+          <img class="product-img" src="${p.img}" alt="${p.name}">
           <div class="product-details">
             <div class="product-name">${p.name}</div>
             <div class="price-wrap"><div class="price-num">Rp ${p.price.toLocaleString('id-ID')}</div></div>
