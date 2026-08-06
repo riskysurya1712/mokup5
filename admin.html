@@ -25,7 +25,7 @@
     .login-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.95);
+      background: rgba(15, 23, 42, 0.98);
       display: flex; justify-content: center; align-items: center;
       z-index: 9999;
       padding: 16px;
@@ -78,6 +78,9 @@
     .btn-orange-submit { width: 100%; background: var(--orange-main); color: white; border: none; padding: 12px; border-radius: 6px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; }
     .btn-orange-submit:hover { background: var(--orange-hover); }
 
+    .btn-cancel-store { display: block; width: 100%; text-align: center; color: var(--text-muted); background: var(--bg-dark); border: 1px solid var(--border-dark); padding: 10px; border-radius: 6px; font-size: 13px; text-decoration: none; margin-top: 10px; font-weight: 600; }
+    .btn-cancel-store:hover { color: var(--text-light); border-color: var(--orange-main); }
+
     .admin-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
     .admin-table th, .admin-table td { padding: 12px; border-bottom: 1px solid var(--border-dark); text-align: left; }
     .admin-table th { background: var(--bg-dark); color: var(--text-muted); font-size: 11px; text-transform: uppercase; }
@@ -102,6 +105,7 @@
         <input type="password" id="loginPass" placeholder="Masukkan password">
       </div>
       <button class="btn-orange-submit" onclick="handleLogin()">Masuk Admin</button>
+      <a href="index.html" class="btn-cancel-store"><i class="fa-solid fa-arrow-left"></i> Batal / Ke Toko</a>
     </div>
   </div>
 
@@ -193,7 +197,6 @@
 
   <!-- Script JS Admin -->
   <script>
-    // Kredensial default
     const ADMIN_USER = "admin";
     const ADMIN_PASS = "admin123";
 
@@ -208,9 +211,9 @@
       checkLoginStatus();
     });
 
-    // Cek Sesi Login dari LocalStorage
+    // Menggunakan sessionStorage agar status login hilang saat halaman ditutup/di-refresh
     function checkLoginStatus() {
-      const isLogged = localStorage.getItem("kyy_admin_logged");
+      const isLogged = sessionStorage.getItem("kyy_admin_logged");
       const loginOverlay = document.getElementById("loginOverlay");
 
       if (isLogged === "true") {
@@ -221,13 +224,12 @@
       }
     }
 
-    // Fungsi Proses Login
     function handleLogin() {
       const user = document.getElementById("loginUser").value.trim();
       const pass = document.getElementById("loginPass").value.trim();
 
       if (user === ADMIN_USER && pass === ADMIN_PASS) {
-        localStorage.setItem("kyy_admin_logged", "true");
+        sessionStorage.setItem("kyy_admin_logged", "true");
         document.getElementById("loginOverlay").style.display = "none";
         document.getElementById("loginUser").value = "";
         document.getElementById("loginPass").value = "";
@@ -237,10 +239,9 @@
       }
     }
 
-    // Fungsi Logout
     function handleLogout() {
       if (confirm("Apakah Anda yakin ingin keluar dari panel admin?")) {
-        localStorage.removeItem("kyy_admin_logged");
+        sessionStorage.removeItem("kyy_admin_logged");
         checkLoginStatus();
       }
     }
@@ -258,7 +259,6 @@
       document.getElementById("admTotProd").innerText = products.length;
       document.getElementById("admTotSales").innerText = salesReport.length;
 
-      // Render Produk
       document.getElementById("admProductTable").innerHTML = products.length === 0 
         ? `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Belum ada produk</td></tr>`
         : products.map((p, i) => `
@@ -270,7 +270,6 @@
           </tr>
         `).join('');
 
-      // Render Penjualan
       document.getElementById("admSalesTable").innerHTML = salesReport.length === 0
         ? `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Belum ada riwayat transaksi</td></tr>`
         : salesReport.map(s => `
@@ -304,7 +303,6 @@
       localStorage.setItem("kyy_products", JSON.stringify(products));
       renderAdminData();
 
-      // Reset Form Input
       document.getElementById("newProdName").value = "";
       document.getElementById("newProdPrice").value = "";
       document.getElementById("newProdImg").value = "";
