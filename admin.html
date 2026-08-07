@@ -28,7 +28,7 @@
     body { 
       background-color: var(--bg-dark); 
       color: var(--text-light); 
-      padding: 20px 16px 60px 16px; 
+      padding: 20px 16px 80px 16px; 
       line-height: 1.5; 
     }
 
@@ -78,13 +78,6 @@
       border-color: var(--orange-main);
       color: var(--orange-main);
     }
-    .badge {
-      background: var(--orange-main);
-      color: white;
-      font-size: 11px;
-      padding: 2px 6px;
-      border-radius: 10px;
-    }
 
     /* Modal Login Overlay */
     .login-overlay {
@@ -117,10 +110,10 @@
       margin-bottom: 20px;
     }
 
-    /* Layout Admin */
+    /* Layout Admin Container */
     .admin-container { 
       max-width: 900px; 
-      margin: 0 auto 24px auto; 
+      margin: 0 auto 30px auto; 
       background: var(--card-dark); 
       border-radius: var(--radius); 
       padding: 24px; 
@@ -128,9 +121,7 @@
     }
     .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-dark); padding-bottom: 16px; margin-bottom: 20px; }
     .admin-header h2 { color: var(--orange-main); font-size: 20px; display: flex; align-items: center; gap: 8px; }
-    .header-actions { display: flex; gap: 8px; }
-    .btn-back, .btn-logout { color: var(--text-muted); text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: var(--bg-dark); border: 1px solid var(--border-dark); border-radius: 6px; cursor: pointer; }
-    .btn-back:hover, .btn-logout:hover { color: var(--text-light); border-color: var(--orange-main); }
+    .btn-logout { color: var(--text-muted); text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: var(--bg-dark); border: 1px solid var(--border-dark); border-radius: 6px; cursor: pointer; }
     .btn-logout:hover { color: #ef4444; border-color: #ef4444; }
 
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
@@ -159,7 +150,7 @@
     .btn-del { color: #ef4444; background: none; border: none; cursor: pointer; font-weight: 600; }
     .btn-del:hover { text-decoration: underline; }
 
-    /* Footer Pengisi Bagian Bawah Layar */
+    /* Footer Bagian Bawah */
     .admin-footer {
       max-width: 900px;
       margin: 0 auto;
@@ -199,7 +190,7 @@
     </a>
     <div class="nav-links">
       <a href="index.html" class="nav-btn"><i class="fa-solid fa-store"></i> Katalog Toko</a>
-      <a href="index.html" class="nav-btn"><i class="fa-solid fa-cart-shopping"></i> Keranjang <span class="badge">0</span></a>
+      <a href="index.html" class="nav-btn"><i class="fa-solid fa-cart-shopping"></i> Keranjang</a>
       <a href="#" class="nav-btn active"><i class="fa-solid fa-user-gear"></i> Panel Admin</a>
     </div>
   </nav>
@@ -306,10 +297,17 @@
     const ADMIN_USER = "admin";
     const ADMIN_PASS = "admin123";
 
-    let products = JSON.parse(localStorage.getItem("kyy_products")) || [
-      { id: 1, name: "Kemeja Casual Oversize Kyy", price: 95000, stok: 15, img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400", desc: "Katun adem nyaman dipakai seharian.", colors: ["Hitam", "Putih"], sizes: ["M", "L"], kategori:"Fashion" },
-      { id: 2, name: "Sepatu Sneaker Sport Pro", price: 165000, stok: 8, img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400", desc: "Sol empuk anti licin.", colors: ["Merah", "Hitam"], sizes: ["40", "41"], kategori:"Fashion" }
+    // Inisialisasi Produk
+    let defaultProducts = [
+      { id: 1, name: "Kemeja Casual Oversize Kyy", price: 95000, stok: 15, img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400", kategori:"Fashion" },
+      { id: 2, name: "Sepatu Sneaker Sport Pro", price: 165000, stok: 8, img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400", kategori:"Fashion" }
     ];
+
+    let products = JSON.parse(localStorage.getItem("kyy_products"));
+    if (!products || !Array.isArray(products) || products.length === 0) {
+      products = defaultProducts;
+      localStorage.setItem("kyy_products", JSON.stringify(products));
+    }
 
     let salesReport = JSON.parse(localStorage.getItem("kyy_sales")) || [];
 
@@ -361,6 +359,10 @@
     }
 
     function renderAdminData() {
+      // Ambil data terbaru dari localStorage
+      products = JSON.parse(localStorage.getItem("kyy_products")) || [];
+      salesReport = JSON.parse(localStorage.getItem("kyy_sales")) || [];
+
       document.getElementById("admTotProd").innerText = products.length;
       document.getElementById("admTotSales").innerText = salesReport.length;
 
@@ -370,7 +372,7 @@
           <tr>
             <td>#${p.id}</td>
             <td>${p.name}</td>
-            <td>Rp ${p.price.toLocaleString('id-ID')}</td>
+            <td>Rp ${Number(p.price).toLocaleString('id-ID')}</td>
             <td><b>${p.stok ?? 0}</b></td>
             <td><button class="btn-del" onclick="delProduct(${i})">Hapus</button></td>
           </tr>
@@ -383,7 +385,7 @@
             <td><b>${s.resi}</b></td>
             <td>${s.tanggal || '-'}</td>
             <td>${s.pemesan}</td>
-            <td>Rp ${s.total.toLocaleString('id-ID')}</td>
+            <td>Rp ${Number(s.total).toLocaleString('id-ID')}</td>
             <td><span style="color:#22c55e;">${s.status}</span></td>
           </tr>
         `).join('');
@@ -391,35 +393,51 @@
 
     function addNewProduct() {
       let name = document.getElementById("newProdName").value.trim();
-      let price = parseInt(document.getElementById("newProdPrice").value);
-      let stok = parseInt(document.getElementById("newProdStock").value) || 0;
+      let priceVal = document.getElementById("newProdPrice").value.trim();
+      let stokVal = document.getElementById("newProdStock").value.trim();
       let kategori = document.getElementById("newProdKat").value;
       let img = document.getElementById("newProdImg").value.trim() || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400";
 
-      if (!name || isNaN(price)) return alert("Nama dan harga produk wajib diisi!");
+      // Validasi Input
+      if (!name) {
+        alert("Nama produk wajib diisi!");
+        return;
+      }
+      if (!priceVal || isNaN(priceVal) || Number(priceVal) <= 0) {
+        alert("Harga harus berupa angka dan lebih dari 0!");
+        return;
+      }
 
-      products.push({
+      let price = Number(priceVal);
+      let stok = stokVal === "" ? 0 : Number(stokVal);
+
+      // Tambahkan ke array
+      let newObj = {
         id: Date.now(),
-        name,
-        price,
-        stok,
-        kategori,
-        img,
+        name: name,
+        price: price,
+        stok: stok,
+        kategori: kategori,
+        img: img,
         colors: ["Standard"],
         sizes: ["Free Size"]
-      });
+      };
 
+      products.push(newObj);
+
+      // Simpan ke LocalStorage
       localStorage.setItem("kyy_products", JSON.stringify(products));
-      renderAdminData();
 
+      // Clear Form
       document.getElementById("newProdName").value = "";
       document.getElementById("newProdPrice").value = "";
       document.getElementById("newProdStock").value = "";
       document.getElementById("newProdImg").value = "";
 
-      alert("Produk berhasil ditambahkan ke Toko Kyy!");
+      alert("Produk berhasil ditambahkan!");
 
-      // Pindah otomatis ke tab Katalog Produk setelah berhasil menyimpan
+      // Update Tampilan & Pindah ke Tab Kelola Katalog
+      renderAdminData();
       const tabKatalog = document.querySelectorAll('.admin-tab-btn')[1];
       switchAdminTab('list', tabKatalog);
     }
