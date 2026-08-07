@@ -19,7 +19,6 @@
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', -apple-system, sans-serif; }
-    
     html { height: 100%; }
 
     body { 
@@ -33,7 +32,7 @@
       flex-direction: column;
     }
 
-    /* Running Text Banner (Pengumuman Admin) */
+    /* Running Text Banner */
     .announce-bar {
       max-width: 900px;
       width: 100%;
@@ -84,6 +83,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      cursor: pointer;
     }
     .nav-btn.active { border-color: var(--orange-main); color: var(--orange-main); }
     .badge { background: var(--orange-main); color: white; border-radius: 10px; padding: 1px 6px; font-size: 10px; }
@@ -123,7 +123,7 @@
     }
     .cat-btn.active { background: var(--orange-main); color: white; border-color: var(--orange-main); }
 
-    /* Grid Produk (Tepat 2 Kolom) */
+    /* Grid Produk (Selalu 2 Kolom) */
     .product-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -146,8 +146,25 @@
     }
     .product-title { font-size: 12px; font-weight: 600; margin-bottom: 4px; line-height: 1.3; }
     .product-price { font-size: 13px; font-weight: 700; color: var(--orange-main); margin-bottom: 8px; }
-    .btn-add-cart {
+    
+    .btn-action-group {
+      display: flex;
+      gap: 6px;
       margin-top: auto;
+    }
+    .btn-add-cart {
+      flex: 1;
+      background: var(--bg-dark);
+      color: var(--orange-main);
+      border: 1px solid var(--orange-main);
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-buy-now {
+      flex: 1;
       background: var(--orange-main);
       color: white;
       border: none;
@@ -156,6 +173,75 @@
       font-size: 11px;
       font-weight: 700;
       cursor: pointer;
+    }
+
+    /* Modal / Pop-up Keranjang */
+    .cart-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      padding: 16px;
+    }
+    .cart-box {
+      background: var(--card-dark);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 420px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      max-height: 80vh;
+    }
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-dark);
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+    }
+    .cart-header h3 { font-size: 14px; color: var(--orange-main); }
+    .close-cart { background: none; border: none; color: var(--text-muted); font-size: 16px; cursor: pointer; }
+    
+    .cart-items { overflow-y: auto; flex: 1; margin-bottom: 12px; }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-dark);
+      border: 1px solid var(--border-dark);
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+    .cart-item-info { flex: 1; }
+    .cart-item-title { font-weight: 600; margin-bottom: 2px; }
+    .cart-item-price { color: var(--orange-main); font-weight: 700; }
+    .cart-item-qty { display: flex; align-items: center; gap: 6px; }
+    .btn-qty { background: var(--card-dark); border: 1px solid var(--border-dark); color: white; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; }
+    
+    .cart-footer { border-top: 1px solid var(--border-dark); padding-top: 10px; }
+    .cart-total { display: flex; justify-content: space-between; font-weight: 700; font-size: 13px; margin-bottom: 10px; }
+    .btn-checkout-wa {
+      width: 100%;
+      background: #22c55e;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
     }
 
     .footer { max-width: 900px; width: 100%; margin: 12px auto 0 auto; text-align: center; color: var(--text-muted); font-size: 11px; }
@@ -173,18 +259,35 @@
   <nav class="top-nav">
     <a href="index.html" class="brand-logo"><i class="fa-solid fa-bag-shopping"></i> Toko Kyy</a>
     <div class="nav-links">
-      <a href="index.html" class="nav-btn active"><i class="fa-solid fa-store"></i> Toko</a>
+      <button class="nav-btn active" onclick="toggleCart()"><i class="fa-solid fa-cart-shopping"></i> Keranjang <span class="badge" id="cartBadge">0</span></button>
       <a href="admin.html" class="nav-btn"><i class="fa-solid fa-user-gear"></i> Admin</a>
     </div>
   </nav>
 
   <!-- Container Toko Utama -->
   <div class="store-container">
-    <!-- Filter Kategori Dinamis dari Admin -->
     <div class="cat-filter" id="categoryFilter"></div>
-
-    <!-- Katalog Produk Dinamis dari Admin -->
     <div class="product-grid" id="productGrid"></div>
+  </div>
+
+  <!-- Modal Pop-up Keranjang -->
+  <div class="cart-overlay" id="cartOverlay">
+    <div class="cart-box">
+      <div class="cart-header">
+        <h3><i class="fa-solid fa-cart-shopping"></i> Keranjang Belanja</h3>
+        <button class="close-cart" onclick="toggleCart()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="cart-items" id="cartItemList">
+        <!-- Item keranjang dimasukkan via JS -->
+      </div>
+      <div class="cart-footer">
+        <div class="cart-total">
+          <span>Total Bayar:</span>
+          <span id="cartTotalPrice" style="color:var(--orange-main);">Rp 0</span>
+        </div>
+        <button class="btn-checkout-wa" onclick="checkoutCartWA()"><i class="fa-brands fa-whatsapp"></i> Beli Semua via WhatsApp</button>
+      </div>
+    </div>
   </div>
 
   <footer class="footer">
@@ -192,17 +295,21 @@
   </footer>
 
   <script>
-    let products = JSON.parse(localStorage.getItem("kyy_products")) || [];
+    let products = JSON.parse(localStorage.getItem("kyy_products")) || [
+      { id: 1, name: "Kemeja Casual Oversize Kyy", price: 95000, kategori: "Fashion", img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400" },
+      { id: 2, name: "Sepatu Sneaker Sport Pro", price: 165000, kategori: "Fashion", img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400" }
+    ];
     let categories = JSON.parse(localStorage.getItem("kyy_categories")) || ["Semua", "Fashion", "Elektronik", "Rumah", "Aksesoris"];
+    let cart = JSON.parse(localStorage.getItem("kyy_cart")) || [];
     let selectedCat = "Semua";
 
     document.addEventListener("DOMContentLoaded", () => {
       loadAnnounce();
       renderCategories();
       renderProducts();
+      updateCartUI();
     });
 
-    // Memuat Running Text dari Pengaturan Admin
     function loadAnnounce() {
       let ann = localStorage.getItem("kyy_announce");
       if (ann && ann.trim() !== "") {
@@ -211,7 +318,6 @@
       }
     }
 
-    // Memuat Kategori yang dibuat Admin
     function renderCategories() {
       let catList = ["Semua", ...categories.filter(c => c !== "Semua")];
       document.getElementById("categoryFilter").innerHTML = catList.map(c => `
@@ -225,7 +331,6 @@
       renderProducts();
     }
 
-    // Memuat Daftar Produk dari Admin
     function renderProducts() {
       let grid = document.getElementById("productGrid");
       let filtered = selectedCat === "Semua" ? products : products.filter(p => p.kategori === selectedCat);
@@ -240,16 +345,101 @@
           <img src="${p.img}" class="product-img" alt="${p.name}" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400'">
           <div class="product-title">${p.name}</div>
           <div class="product-price">Rp ${Number(p.price).toLocaleString('id-ID')}</div>
-          <button class="btn-add-cart" onclick="checkoutWA('${p.name}', ${p.price})">Beli Sekarang</button>
+          <div class="btn-action-group">
+            <button class="btn-add-cart" onclick="addToCart(${p.id})">+ Keranjang</button>
+            <button class="btn-buy-now" onclick="buyDirect('${p.name.replace(/'/g, "\\'")}', ${p.price})">Beli</button>
+          </div>
         </div>
       `).join('');
     }
 
-    // Fitur Beli via WA menggunakan No HP dari Pengaturan Admin
-    function checkoutWA(prodName, price) {
-      let waNumber = localStorage.getItem("kyy_wa") || "628123456789";
-      let msg = encodeURIComponent(`Halo Toko Kyy, saya ingin membeli:\n\n*Produk:* ${prodName}\n*Harga:* Rp ${price.toLocaleString('id-ID')}`);
-      window.open(`https://wa.me/${waNumber}?text=${msg}`, '_blank');
+    // --- FITUR KERANJANG BELANJA ---
+    function addToCart(prodId) {
+      let prod = products.find(p => p.id === prodId);
+      if (!prod) return;
+
+      let exist = cart.find(c => c.id === prodId);
+      if (exist) {
+        exist.qty += 1;
+      } else {
+        cart.push({ id: prod.id, name: prod.name, price: prod.price, qty: 1 });
+      }
+
+      saveCart();
+      updateCartUI();
+      alert(`"${prod.name}" berhasil masuk keranjang!`);
+    }
+
+    function updateCartQty(prodId, change) {
+      let item = cart.find(c => c.id === prodId);
+      if (item) {
+        item.qty += change;
+        if (item.qty <= 0) {
+          cart = cart.filter(c => c.id !== prodId);
+        }
+      }
+      saveCart();
+      updateCartUI();
+    }
+
+    function saveCart() {
+      localStorage.setItem("kyy_cart", JSON.stringify(cart));
+    }
+
+    function updateCartUI() {
+      let totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+      let totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+      document.getElementById("cartBadge").innerText = totalItems;
+      document.getElementById("cartTotalPrice").innerText = `Rp ${totalPrice.toLocaleString('id-ID')}`;
+
+      let cartList = document.getElementById("cartItemList");
+      if (cart.length === 0) {
+        cartList.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:12px; padding:20px;">Keranjang masih kosong.</p>`;
+        return;
+      }
+
+      cartList.innerHTML = cart.map(item => `
+        <div class="cart-item">
+          <div class="cart-item-info">
+            <div class="cart-item-title">${item.name}</div>
+            <div class="cart-item-price">Rp ${(item.price * item.qty).toLocaleString('id-ID')}</div>
+          </div>
+          <div class="cart-item-qty">
+            <button class="btn-qty" onclick="updateCartQty(${item.id}, -1)">-</button>
+            <span><b>${item.qty}</b></span>
+            <button class="btn-qty" onclick="updateCartQty(${item.id}, 1)">+</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleCart() {
+      let overlay = document.getElementById("cartOverlay");
+      overlay.style.display = overlay.style.display === "flex" ? "none" : "flex";
+    }
+
+    // --- CHECKOUT WHATSAPP ---
+    function formatWANumber(num) {
+      let clean = (num || "628123456789").replace(/[^0-9]/g, '');
+      return clean.startsWith('0') ? '62' + clean.slice(1) : clean;
+    }
+
+    function buyDirect(prodName, price) {
+      let waNumber = formatWANumber(localStorage.getItem("kyy_wa"));
+      let msg = encodeURIComponent(`Halo Toko Kyy, saya ingin membeli:\n\n*Nama Produk:* ${prodName}\n*Harga:* Rp ${Number(price).toLocaleString('id-ID')}\n\nApakah stok masih tersedia?`);
+      window.location.href = `https://api.whatsapp.com/send?phone=${waNumber}&text=${msg}`;
+    }
+
+    function checkoutCartWA() {
+      if (cart.length === 0) return alert("Keranjang belanjaan Anda masih kosong!");
+      let waNumber = formatWANumber(localStorage.getItem("kyy_wa"));
+      
+      let listTxt = cart.map((c, i) => `${i + 1}. *${c.name}* (${c.qty}x) = Rp ${(c.price * c.qty).toLocaleString('id-ID')}`).join('\n');
+      let totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      
+      let msg = encodeURIComponent(`Halo Toko Kyy, saya ingin order barang keranjang berikut:\n\n${listTxt}\n\n*Total Bayar:* Rp ${totalPrice.toLocaleString('id-ID')}\n\nMohon diproses, terima kasih!`);
+      window.location.href = `https://api.whatsapp.com/send?phone=${waNumber}&text=${msg}`;
     }
   </script>
 </body>
