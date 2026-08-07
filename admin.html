@@ -19,7 +19,20 @@
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
     body { background-color: var(--bg-dark); color: var(--text-light); padding: 12px; line-height: 1.5; }
     
-    .container { max-width: 900px; margin: 0 auto; }
+    /* Box Form Login */
+    .login-container {
+      max-width: 360px;
+      margin: 60px auto;
+      background: var(--card-dark);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .login-header { text-align: center; margin-bottom: 16px; }
+    .login-header h2 { color: var(--orange-main); font-size: 18px; margin-top: 6px; }
+
+    /* Dashboard Admin Container */
+    .container { max-width: 900px; margin: 0 auto; display: none; }
     
     .top-nav {
       background: var(--card-dark);
@@ -32,7 +45,8 @@
       margin-bottom: 16px;
     }
     .brand-logo { color: var(--orange-main); font-weight: 700; text-decoration: none; font-size: 16px; }
-    .btn-back { background: var(--bg-dark); color: var(--text-light); border: 1px solid var(--border-dark); padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 600; }
+    .nav-actions { display: flex; gap: 8px; }
+    .btn-nav { background: var(--bg-dark); color: var(--text-light); border: 1px solid var(--border-dark); padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 600; cursor: pointer; }
 
     /* Stats Grid */
     .stats-grid {
@@ -61,11 +75,7 @@
     }
     .card-title { font-size: 14px; font-weight: 700; color: var(--orange-main); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
 
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .form-group { margin-bottom: 10px; }
     .form-group.full { grid-column: span 2; }
     .form-group label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; }
@@ -89,6 +99,7 @@
       font-weight: 700;
       cursor: pointer;
     }
+    .btn-submit:hover { background: var(--orange-hover); }
 
     /* Table */
     .table-responsive { overflow-x: auto; }
@@ -102,10 +113,36 @@
 </head>
 <body>
 
-  <div class="container">
+  <!-- FORM LOGIN ADMIN -->
+  <div class="login-container" id="loginBox">
+    <div class="login-header">
+      <i class="fa-solid fa-user-shield" style="font-size: 32px; color: var(--orange-main);"></i>
+      <h2>Login Admin Toko</h2>
+    </div>
+    <form onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="adminUser" placeholder="Masukkan username" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="adminPass" placeholder="Masukkan password" required>
+      </div>
+      <button type="submit" class="btn-submit" style="margin-top: 6px;"><i class="fa-solid fa-right-to-bracket"></i> Masuk Admin</button>
+    </form>
+    <div style="text-align: center; margin-top: 12px;">
+      <a href="index.html" style="color: var(--text-muted); font-size: 11px; text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> Kembali ke Toko</a>
+    </div>
+  </div>
+
+  <!-- DASHBOARD PANEL ADMIN -->
+  <div class="container" id="adminDashboard">
     <div class="top-nav">
       <a href="#" class="brand-logo"><i class="fa-solid fa-user-gear"></i> Panel Admin Toko</a>
-      <a href="index.html" class="btn-back"><i class="fa-solid fa-store"></i> Ke Toko</a>
+      <div class="nav-actions">
+        <a href="index.html" class="btn-nav"><i class="fa-solid fa-store"></i> Ke Toko</a>
+        <button class="btn-nav" onclick="handleLogout()" style="border-color:#ef4444; color:#ef4444;"><i class="fa-solid fa-power-off"></i> Keluar</button>
+      </div>
     </div>
 
     <!-- Ringkasan Statistik -->
@@ -202,15 +239,50 @@
   </div>
 
   <script>
+    // Kredensial Akses Admin
+    const ADMIN_USER = "admin";
+    const ADMIN_PASS = "12345";
+
     let products = JSON.parse(localStorage.getItem("kyy_products")) || [
       { id: 1, name: "Kemeja Casual Oversize Kyy", price: 95000, stock: 15, kategori: "Fashion", img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400" },
       { id: 2, name: "Sepatu Sneaker Sport Pro", price: 165000, stock: 8, kategori: "Fashion", img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400" }
     ];
 
     document.addEventListener("DOMContentLoaded", () => {
-      renderProducts();
-      renderOrdersReport();
+      checkLoginSession();
     });
+
+    // --- SISTEM AUTENTIKASI ---
+    function checkLoginSession() {
+      let isLoggedIn = sessionStorage.getItem("kyy_admin_logged");
+      if (isLoggedIn === "true") {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("adminDashboard").style.display = "block";
+        renderProducts();
+        renderOrdersReport();
+      } else {
+        document.getElementById("loginBox").style.display = "block";
+        document.getElementById("adminDashboard").style.display = "none";
+      }
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      let user = document.getElementById("adminUser").value.trim();
+      let pass = document.getElementById("adminPass").value.trim();
+
+      if (user === ADMIN_USER && pass === ADMIN_PASS) {
+        sessionStorage.setItem("kyy_admin_logged", "true");
+        checkLoginSession();
+      } else {
+        alert("Username atau Password salah!");
+      }
+    }
+
+    function handleLogout() {
+      sessionStorage.removeItem("kyy_admin_logged");
+      checkLoginSession();
+    }
 
     // --- MANAJEMEN PRODUK & STOK ---
     function renderProducts() {
