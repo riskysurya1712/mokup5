@@ -20,22 +20,22 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', -apple-system, sans-serif; }
     
-    html, body {
-      min-height: 100%;
-      overflow-y: auto;
-    }
+    html { height: 100%; }
 
     body { 
       background-color: var(--bg-dark); 
       color: var(--text-light); 
-      padding: 20px 16px 80px 16px; 
+      padding: 16px; 
       line-height: 1.5; 
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* Top Navigation Header */
     .top-nav {
       max-width: 900px;
-      margin: 0 auto 20px auto;
+      width: 100%;
+      margin: 0 auto 16px auto;
       background: var(--card-dark);
       border: 1px solid var(--border-dark);
       border-radius: var(--radius);
@@ -55,11 +55,7 @@
       font-size: 18px;
       text-decoration: none;
     }
-    .nav-links {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
+    .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
     .nav-btn {
       background: var(--bg-dark);
       color: var(--text-light);
@@ -72,14 +68,10 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      cursor: pointer;
     }
-    .nav-btn.active, .nav-btn:hover {
-      border-color: var(--orange-main);
-      color: var(--orange-main);
-    }
+    .nav-btn.active, .nav-btn:hover { border-color: var(--orange-main); color: var(--orange-main); }
 
-    /* Modal Login Overlay */
+    /* Modal Login */
     .login-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -95,81 +87,64 @@
       border-radius: var(--radius);
       width: 100%;
       max-width: 380px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     }
-    .login-box h3 {
-      color: var(--orange-main);
-      margin-bottom: 8px;
-      text-align: center;
-      font-size: 22px;
-    }
-    .login-box p {
-      color: var(--text-muted);
-      font-size: 13px;
-      text-align: center;
-      margin-bottom: 20px;
-    }
+    .login-box h3 { color: var(--orange-main); margin-bottom: 8px; text-align: center; font-size: 22px; }
+    .login-box p { color: var(--text-muted); font-size: 13px; text-align: center; margin-bottom: 20px; }
 
-    /* Layout Admin Container */
+    /* Layout Admin Flex */
     .admin-container { 
       max-width: 900px; 
-      margin: 0 auto 30px auto; 
+      width: 100%;
+      margin: 0 auto; 
       background: var(--card-dark); 
       border-radius: var(--radius); 
-      padding: 24px; 
+      padding: 20px; 
       border: 1px solid var(--border-dark); 
+      flex: 1;
     }
-    .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-dark); padding-bottom: 16px; margin-bottom: 20px; }
-    .admin-header h2 { color: var(--orange-main); font-size: 20px; display: flex; align-items: center; gap: 8px; }
-    .btn-logout { color: var(--text-muted); text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: var(--bg-dark); border: 1px solid var(--border-dark); border-radius: 6px; cursor: pointer; }
+    .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-dark); padding-bottom: 14px; margin-bottom: 16px; }
+    .admin-header h2 { color: var(--orange-main); font-size: 18px; display: flex; align-items: center; gap: 8px; }
+    .btn-logout { color: var(--text-muted); text-decoration: none; font-size: 12px; display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--bg-dark); border: 1px solid var(--border-dark); border-radius: 6px; cursor: pointer; }
     .btn-logout:hover { color: #ef4444; border-color: #ef4444; }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .stat-card { background: var(--bg-dark); border: 1px solid var(--border-dark); padding: 16px; border-radius: var(--radius); }
-    .stat-card h4 { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
-    .stat-card p { font-size: 22px; font-weight: 700; color: var(--orange-main); }
+    /* Grid Statistik */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .stat-card { background: var(--bg-dark); border: 1px solid var(--border-dark); padding: 12px; border-radius: var(--radius); }
+    .stat-card h4 { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
+    .stat-card p { font-size: 18px; font-weight: 700; color: var(--orange-main); }
 
-    .admin-tabs-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-    .admin-tab-btn { background: var(--bg-dark); color: var(--text-muted); border: 1px solid var(--border-dark); padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; flex: 1; min-width: 140px; text-align: center; }
+    /* Menu Tab Admin */
+    .admin-tabs-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-bottom: 20px; }
+    .admin-tab-btn { background: var(--bg-dark); color: var(--text-muted); border: 1px solid var(--border-dark); padding: 10px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; text-align: center; }
     .admin-tab-btn.active { background: var(--orange-main); color: white; border-color: var(--orange-main); }
 
-    .form-group { margin-bottom: 16px; }
+    .form-group { margin-bottom: 14px; }
     .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
-    .form-group input, .form-group select { width: 100%; padding: 10px; background: var(--bg-dark); border: 1px solid var(--border-dark); border-radius: 6px; color: white; font-size: 13px; outline: none; }
-    .form-group input:focus { border-color: var(--orange-main); }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; background: var(--bg-dark); border: 1px solid var(--border-dark); border-radius: 6px; color: white; font-size: 13px; outline: none; }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--orange-main); }
 
-    .btn-orange-submit { width: 100%; background: var(--orange-main); color: white; border: none; padding: 12px; border-radius: 6px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+    .btn-orange-submit { width: 100%; background: var(--orange-main); color: white; border: none; padding: 12px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; }
     .btn-orange-submit:hover { background: var(--orange-hover); }
 
-    .btn-cancel-store { display: block; width: 100%; text-align: center; color: var(--text-muted); background: var(--bg-dark); border: 1px solid var(--border-dark); padding: 10px; border-radius: 6px; font-size: 13px; text-decoration: none; margin-top: 10px; font-weight: 600; }
-    .btn-cancel-store:hover { color: var(--text-light); border-color: var(--orange-main); }
-
-    .admin-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
-    .admin-table th, .admin-table td { padding: 12px; border-bottom: 1px solid var(--border-dark); text-align: left; }
-    .admin-table th { background: var(--bg-dark); color: var(--text-muted); font-size: 11px; text-transform: uppercase; }
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+    .admin-table th, .admin-table td { padding: 10px; border-bottom: 1px solid var(--border-dark); text-align: left; }
+    .admin-table th { background: var(--bg-dark); color: var(--text-muted); font-size: 10px; text-transform: uppercase; }
     .btn-del { color: #ef4444; background: none; border: none; cursor: pointer; font-weight: 600; }
-    .btn-del:hover { text-decoration: underline; }
 
-    /* Footer Bagian Bawah */
-    .admin-footer {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px 16px;
-      text-align: center;
-      border-top: 1px solid var(--border-dark);
-      color: var(--text-muted);
-      font-size: 12px;
-    }
+    /* List Kategori & Log */
+    .item-list { list-style: none; }
+    .item-list li { background: var(--bg-dark); border: 1px solid var(--border-dark); padding: 10px; border-radius: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+
+    .admin-footer { max-width: 900px; width: 100%; margin: 16px auto 0 auto; text-align: center; color: var(--text-muted); font-size: 11px; }
   </style>
 </head>
 <body>
 
-  <!-- Modal Form Login Admin -->
+  <!-- Modal Login -->
   <div class="login-overlay" id="loginOverlay">
     <div class="login-box">
       <h3><i class="fa-solid fa-lock"></i> Login Admin</h3>
-      <p>Masukkan kredensial untuk mengakses Control Panel Toko Kyy</p>
-      
+      <p>Akses Control Panel Toko Kyy</p>
       <div class="form-group">
         <label>Username</label>
         <input type="text" id="loginUser" placeholder="Masukkan username">
@@ -179,48 +154,49 @@
         <input type="password" id="loginPass" placeholder="Masukkan password">
       </div>
       <button class="btn-orange-submit" onclick="handleLogin()">Masuk Admin</button>
-      <a href="index.html" class="btn-cancel-store"><i class="fa-solid fa-arrow-left"></i> Batal / Ke Toko</a>
+      <a href="index.html" style="display:block; text-align:center; color:var(--text-muted); margin-top:12px; font-size:12px; text-decoration:none;">Kembali ke Toko</a>
     </div>
   </div>
 
-  <!-- Header Navigasi Atas -->
+  <!-- Header -->
   <nav class="top-nav">
-    <a href="index.html" class="brand-logo">
-      <i class="fa-solid fa-bag-shopping"></i> Toko Kyy
-    </a>
+    <a href="index.html" class="brand-logo"><i class="fa-solid fa-bag-shopping"></i> Toko Kyy</a>
     <div class="nav-links">
       <a href="index.html" class="nav-btn"><i class="fa-solid fa-store"></i> Katalog Toko</a>
-      <a href="index.html" class="nav-btn"><i class="fa-solid fa-cart-shopping"></i> Keranjang</a>
       <a href="#" class="nav-btn active"><i class="fa-solid fa-user-gear"></i> Panel Admin</a>
     </div>
   </nav>
 
-  <!-- Container Utama Panel Admin -->
+  <!-- Main Container Admin -->
   <div class="admin-container">
     <div class="admin-header">
       <h2><i class="fa-solid fa-user-gear"></i> Control Panel Admin</h2>
-      <div class="header-actions">
-        <button class="btn-logout" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> Keluar Admin</button>
-      </div>
+      <button class="btn-logout" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button>
     </div>
 
-    <!-- Informasi Statistik -->
+    <!-- Statistik Ringkas -->
     <div class="stats-grid">
       <div class="stat-card">
-        <h4>TOTAL PRODUK</h4>
+        <h4>PRODUK</h4>
         <p id="admTotProd">0</p>
       </div>
       <div class="stat-card">
-        <h4>TOTAL PENJUALAN</h4>
+        <h4>KATEGORI</h4>
+        <p id="admTotKat">0</p>
+      </div>
+      <div class="stat-card">
+        <h4>PENJUALAN</h4>
         <p id="admTotSales">0</p>
       </div>
     </div>
 
-    <!-- Navigasi Tab Admin -->
+    <!-- Navigasi Menu Tab -->
     <div class="admin-tabs-bar">
-      <button class="admin-tab-btn active" onclick="switchAdminTab('add', this)">Tambah Produk Baru</button>
-      <button class="admin-tab-btn" onclick="switchAdminTab('list', this)">Kelola Katalog & Stok</button>
-      <button class="admin-tab-btn" onclick="switchAdminTab('sales', this)">Laporan Penjualan</button>
+      <button class="admin-tab-btn active" onclick="switchAdminTab('add', this)">+ Tambah Produk</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('list', this)">Kelola Produk</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('kat', this)">Kategori</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('settings', this)">Pengaturan Toko</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('sales', this)">Laporan</button>
     </div>
 
     <!-- Tab 1: Form Tambah Produk -->
@@ -234,32 +210,27 @@
         <input type="number" id="newProdPrice" placeholder="150000">
       </div>
       <div class="form-group">
-        <label>Jumlah Stok Barang</label>
-        <input type="number" id="newProdStock" placeholder="20" min="0">
+        <label>Jumlah Stok</label>
+        <input type="number" id="newProdStock" placeholder="20">
       </div>
       <div class="form-group">
         <label>Kategori</label>
-        <select id="newProdKat">
-          <option value="Fashion">Fashion</option>
-          <option value="Elektronik">Elektronik</option>
-          <option value="Rumah">Rumah</option>
-          <option value="Aksesoris">Aksesoris</option>
-        </select>
+        <select id="newProdKat"></select>
       </div>
       <div class="form-group">
-        <label>URL Gambar Produk</label>
+        <label>URL Gambar</label>
         <input type="text" id="newProdImg" placeholder="https://images.unsplash.com/...">
       </div>
-      <button class="btn-orange-submit" onclick="addNewProduct()">Simpan Produk Baru</button>
+      <button class="btn-orange-submit" onclick="addNewProduct()">Simpan Produk</button>
     </div>
 
-    <!-- Tab 2: Tabel Daftar Produk -->
+    <!-- Tab 2: Tabel Produk -->
     <div id="admTabList" style="display:none;">
       <table class="admin-table">
         <thead>
           <tr>
             <th>ID</th>
-            <th>Nama Produk</th>
+            <th>Nama</th>
             <th>Harga</th>
             <th>Stok</th>
             <th>Aksi</th>
@@ -269,15 +240,37 @@
       </table>
     </div>
 
-    <!-- Tab 3: Tabel Pesanan / Penjualan -->
+    <!-- Tab 3: Kelola Kategori -->
+    <div id="admTabKat" style="display:none;">
+      <div class="form-group">
+        <label>Nama Kategori Baru</label>
+        <input type="text" id="newKatName" placeholder="Contoh: Sepatu">
+      </div>
+      <button class="btn-orange-submit" onclick="addCategory()" style="margin-bottom:16px;">Tambah Kategori</button>
+      <ul class="item-list" id="categoryList"></ul>
+    </div>
+
+    <!-- Tab 4: Pengaturan Toko -->
+    <div id="admTabSettings" style="display:none;">
+      <div class="form-group">
+        <label>Pengumuman / Running Text Toko</label>
+        <input type="text" id="storeAnnounce" placeholder="Diskon besar-besaran minggu ini!">
+      </div>
+      <div class="form-group">
+        <label>Nomor WhatsApp Admin (Aktivasi Order)</label>
+        <input type="text" id="storeWA" placeholder="628123456789">
+      </div>
+      <button class="btn-orange-submit" onclick="saveSettings()">Simpan Pengaturan</button>
+    </div>
+
+    <!-- Tab 5: Laporan Penjualan -->
     <div id="admTabSales" style="display:none;">
       <table class="admin-table">
         <thead>
           <tr>
-            <th>No Resi</th>
-            <th>Tanggal Pembelian</th>
-            <th>Nama Pembeli</th>
-            <th>Total Bayar</th>
+            <th>Resi</th>
+            <th>Pemesan</th>
+            <th>Total</th>
             <th>Status</th>
           </tr>
         </thead>
@@ -287,66 +280,48 @@
 
   </div>
 
-  <!-- Footer Pengisi Bagian Bawah -->
   <footer class="admin-footer">
-    <p>&copy; 2026 Toko Kyy - Admin Management Panel. All rights reserved.</p>
+    <p>&copy; 2026 Toko Kyy Management System</p>
   </footer>
 
-  <!-- Script JS Admin -->
   <script>
     const ADMIN_USER = "admin";
     const ADMIN_PASS = "admin123";
 
-    // Inisialisasi Produk
-    let defaultProducts = [
-      { id: 1, name: "Kemeja Casual Oversize Kyy", price: 95000, stok: 15, img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400", kategori:"Fashion" },
-      { id: 2, name: "Sepatu Sneaker Sport Pro", price: 165000, stok: 8, img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400", kategori:"Fashion" }
-    ];
-
-    let products = JSON.parse(localStorage.getItem("kyy_products"));
-    if (!products || !Array.isArray(products) || products.length === 0) {
-      products = defaultProducts;
-      localStorage.setItem("kyy_products", JSON.stringify(products));
-    }
-
+    let categories = JSON.parse(localStorage.getItem("kyy_categories")) || ["Fashion", "Elektronik", "Rumah", "Aksesoris"];
+    let products = JSON.parse(localStorage.getItem("kyy_products")) || [];
     let salesReport = JSON.parse(localStorage.getItem("kyy_sales")) || [];
 
     document.addEventListener("DOMContentLoaded", () => {
       checkLoginStatus();
+      loadCategoriesSelect();
     });
 
     function checkLoginStatus() {
       const isLogged = sessionStorage.getItem("kyy_admin_logged");
-      const loginOverlay = document.getElementById("loginOverlay");
-
       if (isLogged === "true") {
-        loginOverlay.style.display = "none";
+        document.getElementById("loginOverlay").style.display = "none";
         renderAdminData();
       } else {
-        loginOverlay.style.display = "flex";
+        document.getElementById("loginOverlay").style.display = "flex";
       }
     }
 
     function handleLogin() {
-      const user = document.getElementById("loginUser").value.trim();
-      const pass = document.getElementById("loginPass").value.trim();
-
-      if (user === ADMIN_USER && pass === ADMIN_PASS) {
+      const u = document.getElementById("loginUser").value.trim();
+      const p = document.getElementById("loginPass").value.trim();
+      if (u === ADMIN_USER && p === ADMIN_PASS) {
         sessionStorage.setItem("kyy_admin_logged", "true");
         document.getElementById("loginOverlay").style.display = "none";
-        document.getElementById("loginUser").value = "";
-        document.getElementById("loginPass").value = "";
         renderAdminData();
       } else {
-        alert("Username atau Password salah!");
+        alert("Kredensial salah!");
       }
     }
 
     function handleLogout() {
-      if (confirm("Apakah Anda yakin ingin keluar dari panel admin?")) {
-        sessionStorage.removeItem("kyy_admin_logged");
-        checkLoginStatus();
-      }
+      sessionStorage.removeItem("kyy_admin_logged");
+      checkLoginStatus();
     }
 
     function switchAdminTab(tab, el) {
@@ -355,99 +330,104 @@
 
       document.getElementById("admTabAdd").style.display = tab === 'add' ? 'block' : 'none';
       document.getElementById("admTabList").style.display = tab === 'list' ? 'block' : 'none';
+      document.getElementById("admTabKat").style.display = tab === 'kat' ? 'block' : 'none';
+      document.getElementById("admTabSettings").style.display = tab === 'settings' ? 'block' : 'none';
       document.getElementById("admTabSales").style.display = tab === 'sales' ? 'block' : 'none';
     }
 
+    function loadCategoriesSelect() {
+      const sel = document.getElementById("newProdKat");
+      sel.innerHTML = categories.map(k => `<option value="${k}">${k}</option>`).join('');
+    }
+
     function renderAdminData() {
-      // Ambil data terbaru dari localStorage
       products = JSON.parse(localStorage.getItem("kyy_products")) || [];
       salesReport = JSON.parse(localStorage.getItem("kyy_sales")) || [];
 
       document.getElementById("admTotProd").innerText = products.length;
+      document.getElementById("admTotKat").innerText = categories.length;
       document.getElementById("admTotSales").innerText = salesReport.length;
 
-      document.getElementById("admProductTable").innerHTML = products.length === 0 
-        ? `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Belum ada produk</td></tr>`
-        : products.map((p, i) => `
+      // Render Produk Table
+      document.getElementById("admProductTable").innerHTML = products.length === 0 ? 
+        `<tr><td colspan="5" style="text-align:center;">Belum ada produk</td></tr>` :
+        products.map((p, i) => `
           <tr>
             <td>#${p.id}</td>
             <td>${p.name}</td>
             <td>Rp ${Number(p.price).toLocaleString('id-ID')}</td>
-            <td><b>${p.stok ?? 0}</b></td>
+            <td><b>${p.stok || 0}</b></td>
             <td><button class="btn-del" onclick="delProduct(${i})">Hapus</button></td>
           </tr>
         `).join('');
 
-      document.getElementById("admSalesTable").innerHTML = salesReport.length === 0
-        ? `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Belum ada riwayat transaksi</td></tr>`
-        : salesReport.map(s => `
-          <tr>
-            <td><b>${s.resi}</b></td>
-            <td>${s.tanggal || '-'}</td>
-            <td>${s.pemesan}</td>
-            <td>Rp ${Number(s.total).toLocaleString('id-ID')}</td>
-            <td><span style="color:#22c55e;">${s.status}</span></td>
-          </tr>
-        `).join('');
+      // Render Kategori List
+      document.getElementById("categoryList").innerHTML = categories.map((k, i) => `
+        <li>
+          <span>${k}</span>
+          <button class="btn-del" onclick="delCategory(${i})">Hapus</button>
+        </li>
+      `).join('');
+
+      // Load Settings
+      document.getElementById("storeAnnounce").value = localStorage.getItem("kyy_announce") || "";
+      document.getElementById("storeWA").value = localStorage.getItem("kyy_wa") || "";
     }
 
     function addNewProduct() {
       let name = document.getElementById("newProdName").value.trim();
-      let priceVal = document.getElementById("newProdPrice").value.trim();
-      let stokVal = document.getElementById("newProdStock").value.trim();
+      let price = Number(document.getElementById("newProdPrice").value);
+      let stok = Number(document.getElementById("newProdStock").value) || 0;
       let kategori = document.getElementById("newProdKat").value;
       let img = document.getElementById("newProdImg").value.trim() || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400";
 
-      // Validasi Input
-      if (!name) {
-        alert("Nama produk wajib diisi!");
-        return;
-      }
-      if (!priceVal || isNaN(priceVal) || Number(priceVal) <= 0) {
-        alert("Harga harus berupa angka dan lebih dari 0!");
-        return;
-      }
+      if (!name || isNaN(price) || price <= 0) return alert("Isi nama & harga dengan benar!");
 
-      let price = Number(priceVal);
-      let stok = stokVal === "" ? 0 : Number(stokVal);
-
-      // Tambahkan ke array
-      let newObj = {
-        id: Date.now(),
-        name: name,
-        price: price,
-        stok: stok,
-        kategori: kategori,
-        img: img,
-        colors: ["Standard"],
-        sizes: ["Free Size"]
-      };
-
-      products.push(newObj);
-
-      // Simpan ke LocalStorage
+      products.push({ id: Date.now(), name, price, stok, kategori, img });
       localStorage.setItem("kyy_products", JSON.stringify(products));
 
-      // Clear Form
       document.getElementById("newProdName").value = "";
       document.getElementById("newProdPrice").value = "";
       document.getElementById("newProdStock").value = "";
       document.getElementById("newProdImg").value = "";
 
-      alert("Produk berhasil ditambahkan!");
-
-      // Update Tampilan & Pindah ke Tab Kelola Katalog
+      alert("Produk Berhasil Ditambahkan!");
       renderAdminData();
-      const tabKatalog = document.querySelectorAll('.admin-tab-btn')[1];
-      switchAdminTab('list', tabKatalog);
+      switchAdminTab('list', document.querySelectorAll('.admin-tab-btn')[1]);
     }
 
-    function delProduct(index) {
-      if (confirm("Apakah Anda yakin ingin menghapus produk ini?")) {
-        products.splice(index, 1);
+    function delProduct(i) {
+      if (confirm("Hapus produk ini?")) {
+        products.splice(i, 1);
         localStorage.setItem("kyy_products", JSON.stringify(products));
         renderAdminData();
       }
+    }
+
+    function addCategory() {
+      let val = document.getElementById("newKatName").value.trim();
+      if (val && !categories.includes(val)) {
+        categories.push(val);
+        localStorage.setItem("kyy_categories", JSON.stringify(categories));
+        document.getElementById("newKatName").value = "";
+        loadCategoriesSelect();
+        renderAdminData();
+      }
+    }
+
+    function delCategory(i) {
+      categories.splice(i, 1);
+      localStorage.setItem("kyy_categories", JSON.stringify(categories));
+      loadCategoriesSelect();
+      renderAdminData();
+    }
+
+    function saveSettings() {
+      let ann = document.getElementById("storeAnnounce").value.trim();
+      let wa = document.getElementById("storeWA").value.trim();
+      localStorage.setItem("kyy_announce", ann);
+      localStorage.setItem("kyy_wa", wa);
+      alert("Pengaturan Berhasil Disimpan!");
     }
   </script>
 </body>
