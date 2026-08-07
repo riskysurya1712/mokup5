@@ -175,7 +175,7 @@
       cursor: pointer;
     }
 
-    /* Modal / Pop-up Keranjang */
+    /* Modal Pop-up Keranjang & Pembayaran */
     .cart-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -195,7 +195,7 @@
       padding: 16px;
       display: flex;
       flex-direction: column;
-      max-height: 80vh;
+      max-height: 90vh;
     }
     .cart-header {
       display: flex;
@@ -220,17 +220,56 @@
       margin-bottom: 8px;
       font-size: 12px;
     }
-    .cart-item-info { flex: 1; }
     .cart-item-title { font-weight: 600; margin-bottom: 2px; }
     .cart-item-price { color: var(--orange-main); font-weight: 700; }
     .cart-item-qty { display: flex; align-items: center; gap: 6px; }
     .btn-qty { background: var(--card-dark); border: 1px solid var(--border-dark); color: white; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; }
     
+    /* Form Pembeli & Opsi Pembayaran */
+    .form-group {
+      margin-bottom: 10px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      background: var(--bg-dark);
+      border: 1px solid var(--border-dark);
+      color: white;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    .payment-section {
+      background: var(--bg-dark);
+      border: 1px solid var(--border-dark);
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 12px;
+    }
+    .payment-title { font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
+    .payment-options { display: flex; flex-direction: column; gap: 6px; }
+    .payment-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .payment-label input { accent-color: var(--orange-main); }
+
     .cart-footer { border-top: 1px solid var(--border-dark); padding-top: 10px; }
     .cart-total { display: flex; justify-content: space-between; font-weight: 700; font-size: 13px; margin-bottom: 10px; }
-    .btn-checkout-wa {
+    .btn-checkout {
       width: 100%;
-      background: #22c55e;
+      background: var(--orange-main);
       color: white;
       border: none;
       padding: 10px;
@@ -243,6 +282,7 @@
       align-items: center;
       gap: 6px;
     }
+    .btn-checkout:hover { background: var(--orange-hover); }
 
     .footer { max-width: 900px; width: 100%; margin: 12px auto 0 auto; text-align: center; color: var(--text-muted); font-size: 11px; }
   </style>
@@ -270,22 +310,51 @@
     <div class="product-grid" id="productGrid"></div>
   </div>
 
-  <!-- Modal Pop-up Keranjang -->
+  <!-- Modal Pop-up Keranjang & Pembayaran -->
   <div class="cart-overlay" id="cartOverlay">
     <div class="cart-box">
       <div class="cart-header">
-        <h3><i class="fa-solid fa-cart-shopping"></i> Keranjang Belanja</h3>
+        <h3><i class="fa-solid fa-cart-shopping"></i> Checkout Pesanan</h3>
         <button class="close-cart" onclick="toggleCart()"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div class="cart-items" id="cartItemList">
-        <!-- Item keranjang dimasukkan via JS -->
+      
+      <div class="cart-items" id="cartItemList"></div>
+
+      <!-- Form Data Pemesan -->
+      <div class="form-group">
+        <label>Nama Lengkap</label>
+        <input type="text" id="custName" placeholder="Masukkan nama Anda">
       </div>
+      <div class="form-group">
+        <label>Alamat Pengiriman</label>
+        <textarea id="custAddress" rows="2" placeholder="Masukkan alamat lengkap"></textarea>
+      </div>
+
+      <!-- Pilih Metode Pembayaran -->
+      <div class="payment-section">
+        <div class="payment-title"><i class="fa-solid fa-wallet"></i> Metode Pembayaran:</div>
+        <div class="payment-options">
+          <label class="payment-label">
+            <input type="radio" name="payMethod" value="Transfer Bank BCA" checked>
+            <span>Bank BCA (No. Rek: 1234567890)</span>
+          </label>
+          <label class="payment-label">
+            <input type="radio" name="payMethod" value="Transfer Bank BNI">
+            <span>Bank BNI (No. Rek: 0987654321)</span>
+          </label>
+          <label class="payment-label">
+            <input type="radio" name="payMethod" value="COD (Bayar di Tempat)">
+            <span>COD (Bayar di Tempat)</span>
+          </label>
+        </div>
+      </div>
+
       <div class="cart-footer">
         <div class="cart-total">
           <span>Total Bayar:</span>
           <span id="cartTotalPrice" style="color:var(--orange-main);">Rp 0</span>
         </div>
-        <button class="btn-checkout-wa" onclick="checkoutCartWA()"><i class="fa-brands fa-whatsapp"></i> Beli Semua via WhatsApp</button>
+        <button class="btn-checkout" onclick="processOrder()"><i class="fa-solid fa-circle-check"></i> Buat Pesanan Sekarang</button>
       </div>
     </div>
   </div>
@@ -347,7 +416,7 @@
           <div class="product-price">Rp ${Number(p.price).toLocaleString('id-ID')}</div>
           <div class="btn-action-group">
             <button class="btn-add-cart" onclick="addToCart(${p.id})">+ Keranjang</button>
-            <button class="btn-buy-now" onclick="buyDirect('${p.name.replace(/'/g, "\\'")}', ${p.price})">Beli</button>
+            <button class="btn-buy-now" onclick="buyDirect(${p.id})">Beli</button>
           </div>
         </div>
       `).join('');
@@ -367,7 +436,12 @@
 
       saveCart();
       updateCartUI();
-      alert(`"${prod.name}" berhasil masuk keranjang!`);
+      alert(`"${prod.name}" masuk ke keranjang!`);
+    }
+
+    function buyDirect(prodId) {
+      addToCart(prodId);
+      toggleCart();
     }
 
     function updateCartQty(prodId, change) {
@@ -401,7 +475,7 @@
 
       cartList.innerHTML = cart.map(item => `
         <div class="cart-item">
-          <div class="cart-item-info">
+          <div>
             <div class="cart-item-title">${item.name}</div>
             <div class="cart-item-price">Rp ${(item.price * item.qty).toLocaleString('id-ID')}</div>
           </div>
@@ -419,27 +493,43 @@
       overlay.style.display = overlay.style.display === "flex" ? "none" : "flex";
     }
 
-    // --- CHECKOUT WHATSAPP ---
-    function formatWANumber(num) {
-      let clean = (num || "628123456789").replace(/[^0-9]/g, '');
-      return clean.startsWith('0') ? '62' + clean.slice(1) : clean;
-    }
-
-    function buyDirect(prodName, price) {
-      let waNumber = formatWANumber(localStorage.getItem("kyy_wa"));
-      let msg = encodeURIComponent(`Halo Toko Kyy, saya ingin membeli:\n\n*Nama Produk:* ${prodName}\n*Harga:* Rp ${Number(price).toLocaleString('id-ID')}\n\nApakah stok masih tersedia?`);
-      window.location.href = `https://api.whatsapp.com/send?phone=${waNumber}&text=${msg}`;
-    }
-
-    function checkoutCartWA() {
+    // --- PROSES PEMESANAN DIRECT (TANPA WHATSAPP) ---
+    function processOrder() {
       if (cart.length === 0) return alert("Keranjang belanjaan Anda masih kosong!");
-      let waNumber = formatWANumber(localStorage.getItem("kyy_wa"));
-      
-      let listTxt = cart.map((c, i) => `${i + 1}. *${c.name}* (${c.qty}x) = Rp ${(c.price * c.qty).toLocaleString('id-ID')}`).join('\n');
+
+      let name = document.getElementById("custName").value.trim();
+      let address = document.getElementById("custAddress").value.trim();
+      let selectedPayment = document.querySelector('input[name="payMethod"]:checked').value;
+
+      if (!name || !address) {
+        return alert("Harap isi Nama Lengkap dan Alamat Pengiriman!");
+      }
+
       let totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+      // Simpan riwayat transaksi ke localStorage untuk Admin
+      let orders = JSON.parse(localStorage.getItem("kyy_orders")) || [];
+      let newOrder = {
+        id: "ORD-" + Date.now().toString().slice(-6),
+        name: name,
+        address: address,
+        payment: selectedPayment,
+        items: cart,
+        total: totalPrice,
+        date: new Date().toLocaleDateString('id-ID')
+      };
       
-      let msg = encodeURIComponent(`Halo Toko Kyy, saya ingin order barang keranjang berikut:\n\n${listTxt}\n\n*Total Bayar:* Rp ${totalPrice.toLocaleString('id-ID')}\n\nMohon diproses, terima kasih!`);
-      window.location.href = `https://api.whatsapp.com/send?phone=${waNumber}&text=${msg}`;
+      orders.push(newOrder);
+      localStorage.setItem("kyy_orders", JSON.stringify(orders));
+
+      // Reset Keranjang
+      cart = [];
+      saveCart();
+      updateCartUI();
+      toggleCart();
+
+      // Notifikasi Berhasil
+      alert(` Selesai!\n\nPesanan Anda ID: ${newOrder.id} berhasil dibuat.\nMetode Pembayaran: ${selectedPayment}\nTotal: Rp ${totalPrice.toLocaleString('id-ID')}\n\nTerima kasih telah berbelanja di Toko Kyy!`);
     }
   </script>
 </body>
