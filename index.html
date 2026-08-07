@@ -44,7 +44,7 @@
       border-radius: 6px;
       font-size: 12px;
       font-weight: 600;
-      display: none; /* Muncul jika ada pengumuman dari admin */
+      display: none;
       align-items: center;
       gap: 8px;
     }
@@ -123,10 +123,10 @@
     }
     .cat-btn.active { background: var(--orange-main); color: white; border-color: var(--orange-main); }
 
-    /* Grid Produk */
+    /* Grid Produk (Tepat 2 Kolom) */
     .product-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
       gap: 12px;
     }
     .product-card {
