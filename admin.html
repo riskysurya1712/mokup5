@@ -8,6 +8,7 @@
   <style>
     :root {
       --orange-main: #f97316;
+      --orange-hover: #ea580c;
       --bg-dark: #0f172a;
       --card-dark: #1e293b;
       --border-dark: #334155;
@@ -16,7 +17,7 @@
       --radius: 8px;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-    body { background-color: var(--bg-dark); color: var(--text-light); padding: 16px; }
+    body { background-color: var(--bg-dark); color: var(--text-light); padding: 12px; line-height: 1.5; }
     
     .container { max-width: 900px; margin: 0 auto; }
     
@@ -31,20 +32,26 @@
       margin-bottom: 16px;
     }
     .brand-logo { color: var(--orange-main); font-weight: 700; text-decoration: none; font-size: 16px; }
-    .btn-back { background: var(--bg-dark); color: var(--text-light); border: 1px solid var(--border-dark); padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; }
+    .btn-back { background: var(--bg-dark); color: var(--text-light); border: 1px solid var(--border-dark); padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 600; }
 
-    .stats-card {
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .stat-card {
       background: var(--card-dark);
       border: 1px solid var(--border-dark);
       border-radius: var(--radius);
-      padding: 16px;
-      margin-bottom: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      padding: 12px;
+      text-align: center;
     }
-    .stat-val { font-size: 20px; font-weight: 700; color: var(--orange-main); }
+    .stat-title { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+    .stat-val { font-size: 16px; font-weight: 700; color: var(--orange-main); }
 
+    /* Form & Cards */
     .card {
       background: var(--card-dark);
       border: 1px solid var(--border-dark);
@@ -54,10 +61,39 @@
     }
     .card-title { font-size: 14px; font-weight: 700; color: var(--orange-main); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
 
-    /* Tabel Laporan */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .form-group { margin-bottom: 10px; }
+    .form-group.full { grid-column: span 2; }
+    .form-group label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; }
+    .form-group input, .form-group select {
+      width: 100%;
+      background: var(--bg-dark);
+      border: 1px solid var(--border-dark);
+      color: white;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+    .btn-submit {
+      width: 100%;
+      background: var(--orange-main);
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Table */
     .table-responsive { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
-    th, td { border: 1px solid var(--border-dark); padding: 10px; }
+    th, td { border: 1px solid var(--border-dark); padding: 8px 10px; }
     th { background: var(--bg-dark); color: var(--text-muted); }
     
     .btn-danger { background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; }
@@ -68,60 +104,172 @@
 
   <div class="container">
     <div class="top-nav">
-      <a href="#" class="brand-logo"><i class="fa-solid fa-user-gear"></i> Admin Toko Kyy</a>
+      <a href="#" class="brand-logo"><i class="fa-solid fa-user-gear"></i> Panel Admin Toko</a>
       <a href="index.html" class="btn-back"><i class="fa-solid fa-store"></i> Ke Toko</a>
     </div>
 
-    <!-- Ringkasan Penjualan -->
-    <div class="stats-card">
-      <div>
-        <div style="font-size:12px; color:var(--text-muted);">Total Pendapatan</div>
-        <div class="stat-val" id="totalIncome">Rp 0</div>
+    <!-- Ringkasan Statistik -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-title">Total Produk</div>
+        <div class="stat-val" id="totalProdCount">0</div>
       </div>
-      <div>
-        <div style="font-size:12px; color:var(--text-muted);">Total Pesanan</div>
+      <div class="stat-card">
+        <div class="stat-title">Total Pesanan</div>
         <div class="stat-val" id="totalOrdersCount" style="color:white;">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">Pendapatan</div>
+        <div class="stat-val" id="totalIncome">Rp 0</div>
       </div>
     </div>
 
-    <!-- Tabel Laporan Pesanan -->
+    <!-- Form Tambah Produk Baru -->
     <div class="card">
-      <div class="card-title">
-        <span><i class="fa-solid fa-list-check"></i> Laporan Pesanan Masuk</span>
-        <button class="btn-danger" onclick="clearAllOrders()"><i class="fa-solid fa-trash"></i> Hapus Semua Laporan</button>
-      </div>
+      <div class="card-title"><i class="fa-solid fa-box-open"></i> Tambah Produk Baru</div>
+      <form id="productForm" onsubmit="saveProduct(event)">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Nama Produk</label>
+            <input type="text" id="prodName" placeholder="Contoh: Kemeja Oversize" required>
+          </div>
+          <div class="form-group">
+            <label>Harga (Rp)</label>
+            <input type="number" id="prodPrice" placeholder="150000" required>
+          </div>
+          <div class="form-group">
+            <label>Stok Barang</label>
+            <input type="number" id="prodStock" placeholder="20" required>
+          </div>
+          <div class="form-group">
+            <label>Kategori</label>
+            <select id="prodCategory">
+              <option value="Fashion">Fashion</option>
+              <option value="Elektronik">Elektronik</option>
+              <option value="Rumah">Rumah</option>
+              <option value="Aksesoris">Aksesoris</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>URL Gambar Produk</label>
+            <input type="text" id="prodImg" placeholder="https://..." required>
+          </div>
+        </div>
+        <button type="submit" class="btn-submit"><i class="fa-solid fa-plus"></i> Simpan Produk Baru</button>
+      </form>
+    </div>
 
+    <!-- Kelola Stok & Daftar Produk -->
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-boxes-stacked"></i> Kelola Katalog & Stok Barang</div>
       <div class="table-responsive">
         <table>
           <thead>
             <tr>
-              <th>ID & Tanggal</th>
+              <th>Gambar</th>
+              <th>Produk</th>
+              <th>Harga</th>
+              <th>Stok</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="productListBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Laporan Pesanan Masuk -->
+    <div class="card">
+      <div class="card-title">
+        <span><i class="fa-solid fa-file-invoice-dollar"></i> Laporan Pesanan Masuk</span>
+        <button class="btn-danger" onclick="clearAllOrders()"><i class="fa-solid fa-trash"></i> Hapus Laporan</button>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>ID & Tgl</th>
               <th>Pemesan</th>
-              <th>Detail Barang</th>
-              <th>Pembayaran</th>
+              <th>Detail Items</th>
+              <th>Bayar</th>
               <th>Total</th>
             </tr>
           </thead>
-          <tbody id="orderTableBody">
-            <!-- Data dimasukkan via JS -->
-          </tbody>
+          <tbody id="orderTableBody"></tbody>
         </table>
       </div>
     </div>
   </div>
 
   <script>
+    let products = JSON.parse(localStorage.getItem("kyy_products")) || [
+      { id: 1, name: "Kemeja Casual Oversize Kyy", price: 95000, stock: 15, kategori: "Fashion", img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400" },
+      { id: 2, name: "Sepatu Sneaker Sport Pro", price: 165000, stock: 8, kategori: "Fashion", img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400" }
+    ];
+
     document.addEventListener("DOMContentLoaded", () => {
-      loadOrdersReport();
+      renderProducts();
+      renderOrdersReport();
     });
 
-    function loadOrdersReport() {
+    // --- MANAJEMEN PRODUK & STOK ---
+    function renderProducts() {
+      let tbody = document.getElementById("productListBody");
+      document.getElementById("totalProdCount").innerText = products.length;
+
+      if (products.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:16px;">Belum ada produk tersimpan.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = products.map(p => `
+        <tr>
+          <td style="text-align:center;">
+            <img src="${p.img}" style="width:40px; height:40px; object-fit:cover; border-radius:4px;" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400'">
+          </td>
+          <td><b>${p.name}</b><br><small style="color:var(--text-muted);">${p.kategori}</small></td>
+          <td style="color:var(--orange-main); font-weight:700;">Rp ${Number(p.price).toLocaleString('id-ID')}</td>
+          <td style="font-weight:700;">${p.stock || 0} pcs</td>
+          <td>
+            <button class="btn-danger" onclick="deleteProduct(${p.id})"><i class="fa-solid fa-trash"></i></button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function saveProduct(e) {
+      e.preventDefault();
+      let name = document.getElementById("prodName").value.trim();
+      let price = Number(document.getElementById("prodPrice").value);
+      let stock = Number(document.getElementById("prodStock").value);
+      let kategori = document.getElementById("prodCategory").value;
+      let img = document.getElementById("prodImg").value.trim();
+
+      let newProduct = { id: Date.now(), name, price, stock, kategori, img };
+      products.push(newProduct);
+      
+      localStorage.setItem("kyy_products", JSON.stringify(products));
+      renderProducts();
+      document.getElementById("productForm").reset();
+      alert("Produk baru berhasil ditambahkan!");
+    }
+
+    function deleteProduct(id) {
+      if (confirm("Apakah Anda yakin ingin menghapus produk ini?")) {
+        products = products.filter(p => p.id !== id);
+        localStorage.setItem("kyy_products", JSON.stringify(products));
+        renderProducts();
+      }
+    }
+
+    // --- MANAJEMEN LAPORAN PESANAN ---
+    function renderOrdersReport() {
       let orders = JSON.parse(localStorage.getItem("kyy_orders")) || [];
       let tbody = document.getElementById("orderTableBody");
       let totalIncome = 0;
 
       if (orders.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:20px;">Belum ada data pesanan masuk.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:16px;">Belum ada pesanan masuk.</td></tr>`;
         document.getElementById("totalIncome").innerText = "Rp 0";
         document.getElementById("totalOrdersCount").innerText = "0";
         return;
@@ -129,19 +277,12 @@
 
       tbody.innerHTML = orders.map(ord => {
         totalIncome += ord.total;
-        
         let itemsList = ord.items.map(item => `- ${item.name} (${item.qty}x)`).join('<br>');
 
         return `
           <tr>
-            <td>
-              <b>${ord.id}</b><br>
-              <small style="color:var(--text-muted);">${ord.date}</small>
-            </td>
-            <td>
-              <b>${ord.name}</b><br>
-              <small style="color:var(--text-muted);">${ord.address}</small>
-            </td>
+            <td><b>${ord.id}</b><br><small style="color:var(--text-muted);">${ord.date}</small></td>
+            <td><b>${ord.name}</b><br><small style="color:var(--text-muted);">${ord.address}</small></td>
             <td>${itemsList}</td>
             <td><span class="badge-pay">${ord.payment}</span></td>
             <td style="font-weight:700; color:var(--orange-main);">Rp ${ord.total.toLocaleString('id-ID')}</td>
@@ -154,9 +295,9 @@
     }
 
     function clearAllOrders() {
-      if (confirm("Apakah Anda yakin ingin menghapus semua laporan pesanan?")) {
+      if (confirm("Hapus seluruh riwayat laporan pesanan?")) {
         localStorage.removeItem("kyy_orders");
-        loadOrdersReport();
+        renderOrdersReport();
       }
     }
   </script>
